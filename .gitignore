@@ -1,0 +1,13 @@
+src/mlflow_cleanup.py
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+docker/preprocessor.joblib
+data/processed/
+data/raw/
+logs/
+.idea/
+.vscode/
+.ipynb_checkpoints/

@@ -1,0 +1,22 @@
+artifact_path: file:///C:/Users/himan/Documents/Projects/ml-risk-prediction/src/mlruns/1/models/m-90ff277acb5c437bb619694a48419c5f/artifacts
+flavors:
+  python_function:
+    data: model.ubj
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.xgboost
+    python_version: 3.10.11
+  xgboost:
+    code: null
+    data: model.ubj
+    model_class: xgboost.sklearn.XGBClassifier
+    model_format: ubj
+    xgb_version: 3.1.3
+mlflow_version: 3.9.0
+model_id: m-90ff277acb5c437bb619694a48419c5f
+model_size_bytes: 183232
+model_uuid: m-90ff277acb5c437bb619694a48419c5f
+prompts: null
+run_id: c7abbe6fdb5545b0a69cbfe730904951
+utc_time_created: '2026-02-01 12:02:07.859498'
