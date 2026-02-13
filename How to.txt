@@ -1,0 +1,42 @@
+# Feature Engineering - 
+$ python src/features.py
+
+
+# Train and save the ML model -
+$ python src/train.py
+
+# See model registry - 
+$ mlflow ui
+
+Open[http://127.0.0.1:5000] - Only if you running the api locally
+
+# How to test the docker (Swagger UI) -
+$ uvicorn api.main:app --reload
+
+************ Docker - 
+# Built Container -
+$ docker build -t churn-api:v1 -f docker/Dockerfile .
+$ docker build --no-cache -t churn-api:v1 -f docker/Dockerfile .
+
+# Test/Run the container
+$ docker run -p 8000:8000 churn-api:v1
+
+Open[http://localhost:8000/docs]
+
+# Get the container list
+$ docker ps
+
+# Enter the container shell to check all the trasfered files
+$ docker exec -it <CONTAINER_ID> ls -R
+
+# MSYS_NO_PATHCONV=1 - This tells Git Bash not to translate paths for this specific command.
+$ MSYS_NO_PATHCONV=1 docker run -it churn-api:v1 ls -la /app/mlflow.db
+
+## Clean up all stopped containers (a good habit for production-grade development)
+docker container prune -f
+
+## Remove the image
+docker rmi churn-api:v1
+
+## Force stop and remove a container (First stop/remove container and then remove the image)
+docker rm -f <CONTAINER_ID>

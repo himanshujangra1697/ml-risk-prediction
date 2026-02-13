@@ -33,15 +33,23 @@ def build_feature_pipeline(numeric_features, categorical_features):
 
 if __name__ == "__main__":
     # Load your raw data
-    df = pd.read_csv('../data/raw/train.csv')
+    df = pd.read_csv('data/raw/train.csv')
+
+    df.columns = (
+        df.columns
+        .str.strip()
+        .str.lower()
+        .str.replace(r"\s+", "_", regex=True)
+    )
     
+    # print("Columns after renaming:", df.columns.tolist())
     # delete row where Churn is missing
-    df = df.dropna(subset=['Churn'])
+    df = df.dropna(subset=['churn'])
     
     # Define your columns based on the dataset
     # (Update these names based on the actual CSV headers)
-    target = 'Churn'
-    X = df.drop(columns=[target, 'CustomerID']) # Drop ID as it's not a feature
+    target = 'churn'
+    X = df.drop(columns=[target, 'customerid']) # Drop ID as it's not a feature
     y = df[target]
 
     num_cols = X.select_dtypes(include=['int64', 'float64']).columns.tolist()
@@ -56,9 +64,9 @@ if __name__ == "__main__":
     X_test_processed = pipeline.transform(X_test)
 
     # Save the pipeline (This is the "brain" for your API)
-    joblib.dump(pipeline, '../docker/preprocessor.joblib')
+    joblib.dump(pipeline, 'docker/preprocessor.joblib')
     print("Feature engineering pipeline saved to docker/preprocessor.joblib")
 
     # Save processed data for train.py
-    pd.DataFrame(X_train_processed).to_csv('../data/processed/train_x.csv', index=False)
-    y_train.to_csv('../data/processed/train_y.csv', index=False)
+    pd.DataFrame(X_train_processed).to_csv('data/processed/train_x.csv', index=False)
+    y_train.to_csv('data/processed/train_y.csv', index=False)

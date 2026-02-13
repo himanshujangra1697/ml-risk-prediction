@@ -11,3 +11,4 @@ logs/
 .idea/
 .vscode/
 .ipynb_checkpoints/
+mlruns/

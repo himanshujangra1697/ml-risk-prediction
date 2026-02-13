@@ -7,9 +7,12 @@ import joblib
 from sklearn.metrics import f1_score, roc_auc_score
 
 def train_model():
+
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
     # 1. Load Processed Data
-    X_train = pd.read_csv('../data/processed/train_x.csv')
-    y_train = pd.read_csv('../data/processed/train_y.csv').values.ravel()
+    X_train = pd.read_csv('data/processed/train_x.csv')
+    y_train = pd.read_csv('data/processed/train_y.csv').values.ravel()
 
     # 2. Start MLflow Tracking
     mlflow.set_experiment("Customer_Churn_Prediction")
@@ -41,7 +44,7 @@ def train_model():
         mlflow.log_metric("auc_score", auc)
         
         # Save the model to the docker folder for the API to use later
-        joblib.dump(model, '../docker/model.joblib')
+        joblib.dump(model, 'docker/model.joblib')
         
         # Also log the model artifact in MLflow (Step 5 of your guide)
         mlflow.xgboost.log_model(model, name="model_artifacts", registered_model_name="ChurnPredictionXGB")
@@ -50,7 +53,10 @@ def train_model():
         print("Experiment tracked in MLflow.")
 
 def promote_model(model_name, version):
+
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
     client = MlflowClient()
+
     
     # 1. Assign the 'champion' alias to the specific version
     # This is the modern way to say "This is our Production model"

@@ -1,3 +1,4 @@
+import os
 import mlflow
 import pandas as pd
 import joblib
@@ -15,8 +16,18 @@ async def lifespan(app: FastAPI):
     It pulls the '@champion' model from MLflow.
     """
     try:
+
+        # 1. Force the Tracking URI to the SQLite DB in the root
+        # Get the directory where main.py lives (api/)
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        # Go up one level to find the root folder (ml-risk-prediction/)
+        project_root = os.path.abspath(os.path.join(current_dir, ".."))
+        
+        db_path = f"sqlite:///{project_root}/mlflow.db"
+        mlflow.set_tracking_uri(db_path)
+
         # 1. Load the Preprocessor (Saved in Step 3)
-        model_assets["preprocessor"] = joblib.load("docker/preprocessor.joblib")
+        model_assets["preprocessor"] = joblib.load(os.path.join(project_root, "docker/preprocessor.joblib"))
         
         # 2. Load the Model from MLflow Registry using the Alias
         model_name = "ChurnPredictionXGB"
@@ -34,17 +45,17 @@ app = FastAPI(title="Customer Churn Prediction Service", lifespan=lifespan)
 
 # Define the input schema using Pydantic
 class CustomerInput(BaseModel):
-    Age: int
-    Tenure: int
-    Usage_Frequency: float
-    Support_Calls: int
-    Payment_Delay: int
-    Total_Spend: float
-    Last_Interaction: int
-    Gender: str
-    Subscription_Type: str
-    Contract_Length: str
-
+    age: int
+    tenure: int
+    usage_frequency: float
+    support_calls: int
+    payment_delay: int
+    total_spend: float
+    last_interaction: int
+    gender: str
+    subscription_type: str
+    contract_length: str
+    
 @app.get("/health")
 def health():
     return {"status": "online", "model": "ChurnPredictionXGB", "alias": "champion"}
@@ -57,6 +68,7 @@ async def predict(data: CustomerInput):
     try:
         # Convert input to DataFrame
         input_df = pd.DataFrame([data.dict()])
+        print(input_df)
         
         # Preprocess the data
         processed_data = model_assets["preprocessor"].transform(input_df)
